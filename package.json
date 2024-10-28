@@ -13,6 +13,7 @@
     "@react-navigation/native": "^6.1.18",
     "@react-navigation/stack": "^6.4.1",
     "expo": "^51.0.38",
+    "expo-linear-gradient": "~13.0.2",
     "nativewind": "^2.0.11",
     "react": "^18.3.1",
     "react-native": "^0.75.4",
