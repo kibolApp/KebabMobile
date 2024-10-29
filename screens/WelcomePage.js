@@ -16,8 +16,8 @@ export default function HomePage({ navigation }) {
         resizeMode="contain"
       />
 
-      <Text className="text-2xl font-bold text-center mb-4 z-10 text-gray-800">
-        LEGNICA KEBAB CITY TOUR
+      <Text className="text-2xl font-bold text-center mb-4 z-10 text-gray-800 uppercase">
+        Legnica Kebab City Tour
       </Text>
 
       <Text className="text-center text-sm text-gray-600 px-5 mb-8 z-10">
@@ -28,14 +28,14 @@ export default function HomePage({ navigation }) {
         className="bg-[#283618] py-3 rounded-full mb-4 w-[75%] items-center"
         onPress={() => console.log('Navigate to Map')}
       >
-        <Text className="text-lg font-bold text-white">MAPA</Text>
+        <Text className="text-lg font-bold text-white uppercase">Mapa</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
         className="bg-[#283618] py-3 rounded-full w-[75%] items-center"
         onPress={() => navigation.navigate('AuthPage')}
       >
-        <Text className="text-lg font-bold text-white">LOGOWANIE</Text>
+        <Text className="text-lg font-bold text-white uppercase">Logowanie</Text>
       </TouchableOpacity>
     </View>
   );
