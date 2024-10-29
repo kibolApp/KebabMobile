@@ -15,8 +15,8 @@
     "expo": "^51.0.38",
     "expo-linear-gradient": "~13.0.2",
     "nativewind": "^2.0.11",
-    "react": "^18.3.1",
-    "react-native": "^0.75.4",
+    "react": "^18.2.0",
+    "react-native": "^0.74.5",
     "react-native-tailwindcss": "^1.1.11"
   },
   "devDependencies": {
@@ -27,7 +27,7 @@
     "@react-native/eslint-config": "0.75.4",
     "@react-native/metro-config": "0.75.4",
     "@react-native/typescript-config": "0.75.4",
-    "@types/react": "^18.3.11",
+    "@types/react": "^18.2.79",
     "@types/react-test-renderer": "^18.0.0",
     "babel-jest": "^29.6.3",
     "eslint": "^8.19.0",
@@ -35,7 +35,7 @@
     "prettier": "2.8.8",
     "react-test-renderer": "18.3.1",
     "tailwindcss": "^3.3.2",
-    "typescript": "^5.6.3"
+    "typescript": "^5.3.3"
   },
   "engines": {
     "node": ">=18"

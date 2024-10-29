@@ -7,7 +7,7 @@ export default function HomePage({ navigation }) {
     <View className="flex-1 items-center justify-center bg-gray-100">
       <LinearGradient
         colors={['#D8D9CE', '#FFFFFF']}
-        className="absolute inset-x-0 top-[20%] w-full h-[80%] rounded-t-[40px]"
+        className="absolute inset-x-0 top-[26%] w-full h-[80%] rounded-t-[40px]"
       />
 
       <Image
