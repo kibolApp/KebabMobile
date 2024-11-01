@@ -11,7 +11,7 @@ export default function AuthPage() {
   };
 
   return (
-    <View className="flex-1 justify-center p-5 bg-[#D8D9CE]">
+    <View className="flex-1 justify-center p-5 bg-custom-beige">
       {isSignUp ? (
         <Register toggleForm={toggleForm} />
       ) : (

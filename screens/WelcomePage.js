@@ -1,14 +1,15 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import tailwindConfig from '../tailwind.config';
 
 export default function HomePage({ navigation }) {
   return (
     <View className="flex-1 items-center justify-center bg-gray-100">
-      <LinearGradient
-        colors={['#D8D9CE', '#FFFFFF']}
-        className="absolute inset-x-0 top-[26%] w-full h-[80%] rounded-t-[40px]"
-      />
+    <LinearGradient
+      colors={[tailwindConfig.theme.extend.colors['custom-beige'], tailwindConfig.theme.extend.colors.white]}
+      className="absolute inset-x-0 top-[26%] w-full h-[80%] rounded-t-[40px]"
+    />
 
       <Image
         source={require('../assets/kebab_logo.png')}
@@ -25,14 +26,14 @@ export default function HomePage({ navigation }) {
       </Text>
 
       <TouchableOpacity
-        className="bg-[#283618] py-3 rounded-full mb-4 w-[75%] items-center"
+        className="bg-button-green py-3 rounded-full mb-4 w-[75%] items-center"
         onPress={() => console.log('Navigate to Map')}
       >
         <Text className="text-lg font-bold text-white uppercase">Mapa</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
-        className="bg-[#283618] py-3 rounded-full w-[75%] items-center"
+        className="bg-button-green py-3 rounded-full w-[75%] items-center"
         onPress={() => navigation.navigate('AuthPage')}
       >
         <Text className="text-lg font-bold text-white uppercase">Logowanie</Text>
