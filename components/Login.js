@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, Text, TextInput, Button } from 'react-native';
-import tailwindConfig from '../tailwind.config';
 
 export default function Login({ toggleForm }) {
   return (
@@ -17,11 +16,7 @@ export default function Login({ toggleForm }) {
           placeholder="Hasło"
           secureTextEntry
         />
-       <Button
-         title="Zaloguj się"
-         color={tailwindConfig.theme.extend.colors['button-green']}
-         onPress={() => {}}
-       />
+       <Button title="Zaloguj się" color="#283618" onPress={() => {}} />
         <Text className="text-center mt-4">
           Nie posiadasz konta?{' '}
           <Text onPress={toggleForm} className="text-green-700 underline">

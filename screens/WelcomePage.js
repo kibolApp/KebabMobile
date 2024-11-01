@@ -1,13 +1,12 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import tailwindConfig from '../tailwind.config';
 
 export default function HomePage({ navigation }) {
   return (
     <View className="flex-1 items-center justify-center bg-gray-100">
     <LinearGradient
-      colors={[tailwindConfig.theme.extend.colors['custom-beige'], tailwindConfig.theme.extend.colors.white]}
+      colors={['#D8D9CE', '#FFFFFF']}
       className="absolute inset-x-0 top-[26%] w-full h-[80%] rounded-t-[40px]"
     />
 
