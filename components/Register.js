@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TextInput, Button } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 
 export default function Register({ toggleForm }) {
   return (
@@ -20,7 +20,12 @@ export default function Register({ toggleForm }) {
           placeholder="Hasło"
           secureTextEntry
         />
-       <Button title="Zarejestruj się" color="#283618" onPress={() => {}} />
+        <TouchableOpacity
+          className="bg-button-green py-3 mb-4 w-full items-center"
+          onPress={() => console.log('Register')}
+        >
+          <Text className="text-lg font-bold text-white uppercase">Zarejestruj się</Text>
+        </TouchableOpacity>
         <Text className="text-center mt-4">
           Posiadasz już konto?{' '}
           <Text onPress={toggleForm} className="text-green-700 underline">
