@@ -10,6 +10,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@expo/vector-icons": "^14.0.4",
     "@react-navigation/native": "^6.1.18",
     "@react-navigation/stack": "^6.4.1",
     "expo": "^51.0.38",

@@ -26,7 +26,7 @@ export default function HomePage({ navigation }) {
 
       <TouchableOpacity
         className="bg-button-green py-3 rounded-full mb-4 w-[75%] items-center"
-        onPress={() => console.log('Navigate to Map')}
+        onPress={() => navigation.navigate('HomePage')}
       >
         <Text className="text-lg font-bold text-white uppercase">Mapa</Text>
       </TouchableOpacity>
