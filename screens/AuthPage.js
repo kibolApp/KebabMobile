@@ -15,7 +15,7 @@ export default function AuthPage() {
 
   return (
     <View className="flex-1 justify-center p-5 bg-custom-beige">
-      <BackButton onPress={() => navigation.goBack()} />
+      <BackButton onPress={() => navigation.goBack()} color="#00000"/>
       {isSignUp ? (
         <Register toggleForm={toggleForm} />
       ) : (

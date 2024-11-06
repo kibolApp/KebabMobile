@@ -3,14 +3,13 @@ import { TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 
-export default function BackButton({ onPress }) {
+export default function BackButton({ onPress, color = '#000000' }) {
  const navigation = useNavigation();
   return (
      <TouchableOpacity
-               className="absolute top-10 left-5"
                onPress={() => navigation.goBack()}
              >
-               <Ionicons name="arrow-back" size={30} color="#00000" />
+               <Ionicons name="arrow-back" size={30} color={color} />
              </TouchableOpacity>
          );
 }
