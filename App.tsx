@@ -16,7 +16,6 @@ function App(): React.JSX.Element {
           component={WelcomePage}
           options={{ headerShown: false }}
         />
-
         <Stack.Screen
           name="AuthPage"
           component={AuthPage}

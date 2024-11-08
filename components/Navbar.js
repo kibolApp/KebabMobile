@@ -4,7 +4,7 @@ import BackButton from './BackButton';
 
 export default function Navbar({ onBackPress }) {
   return (
-    <View className="flex-row items-center justify-between bg-button-green w-full p-4">
+    <View className="flex-row items-center justify-between bg-custom-green w-full p-4">
       <BackButton onPress={onBackPress} color="#FFFFFF" />
       <Image
         source={require('../assets/kebab_logo.png')}
