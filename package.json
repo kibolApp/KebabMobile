@@ -13,6 +13,7 @@
   "dependencies": {
     "@react-navigation/native": "^6.1.18",
     "@react-navigation/stack": "^6.4.1",
+    "axios": "^1.7.7",
     "expo": "^51.0.38",
     "expo-linear-gradient": "~13.0.2",
     "nativewind": "^2.0.11",
