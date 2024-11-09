@@ -25,14 +25,14 @@ export default function HomePage({ navigation }) {
       </Text>
 
       <TouchableOpacity
-        className="bg-button-green py-3 rounded-full mb-4 w-[75%] items-center"
-        onPress={() => console.log('Navigate to Map')}
+        className="bg-custom-green py-3 rounded-full mb-4 w-[75%] items-center"
+        onPress={() => navigation.navigate('HomePage')}
       >
         <Text className="text-lg font-bold text-white uppercase">Mapa</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
-        className="bg-button-green py-3 rounded-full w-[75%] items-center"
+        className="bg-custom-green py-3 rounded-full w-[75%] items-center"
         onPress={() => navigation.navigate('AuthPage')}
       >
         <Text className="text-lg font-bold text-white uppercase">Logowanie</Text>
