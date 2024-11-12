@@ -7,11 +7,11 @@ export default function ContactUsModal({ visible, onClose }) {
 
   const handleSend = () => {
     if (message.trim()) {
-      alert('Message sent to the admin!');
+      alert('Wysłano sugestie do administratora!');
       setMessage('');
       onClose();
     } else {
-      alert('Please enter a message before sending.');
+      alert('Proszę wprowadzić sugestie przed wysłaniem.');
     }
   };
 
@@ -25,11 +25,11 @@ export default function ContactUsModal({ visible, onClose }) {
             <Ionicons name="close" size={24} color="#333" />
           </TouchableOpacity>
 
-          <Text className="text-lg font-bold mb-4 text-center">Contact Us</Text>
+          <Text className="text-lg font-bold mb-4 text-center">Skontaktuj się z nami</Text>
 
           <TextInput
             className="h-24 border border-gray-400 mb-4 p-2 rounded-md text-base text-top"
-            placeholder="Enter your suggestions..."
+            placeholder="Opisz swoje sugestie..."
             value={message}
             onChangeText={setMessage}
             multiline
@@ -40,7 +40,7 @@ export default function ContactUsModal({ visible, onClose }) {
             className="bg-custom-green py-2 px-6 rounded-md items-center self-center"
             onPress={handleSend}
           >
-            <Text className="text-white font-bold">Send Suggestion</Text>
+            <Text className="text-white font-bold">Wyślij</Text>
           </TouchableOpacity>
         </View>
       </View>
