@@ -23,6 +23,11 @@ function App(): React.JSX.Element {
             component={AuthPage}
             options={{headerShown: false}}
           />
+          <Stack.Screen
+            name="HomePage"
+            component={HomePage}
+            options={{headerShown: false}}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </AuthProvider>

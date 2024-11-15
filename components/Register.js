@@ -56,7 +56,7 @@ export default function Register({toggleForm}) {
           onChangeText={setPasswordConfirmation}
         />
         <TouchableOpacity
-          className="bg-button-green py-3 mb-4 w-full items-center"
+          className="bg-custom-green py-3 mb-4 w-full items-center"
           onPress={handleRegister}>
           <Text className="text-lg font-bold text-white uppercase">
             Zarejestruj się
