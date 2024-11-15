@@ -4,6 +4,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {AuthProvider} from './contexts/AuthContext';
 import WelcomePage from './screens/WelcomePage';
 import AuthPage from './screens/AuthPage';
+import HomePage from './screens/HomePage';
 
 const Stack = createStackNavigator();
 
