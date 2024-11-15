@@ -1,8 +1,16 @@
 import React from 'react';
-import {View, Text, Image, TouchableOpacity} from 'react-native';
+import {View, Text, Image, TouchableOpacity, Alert} from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
+import {useAuth} from '../contexts/AuthContext';
 
-export default function HomePage({navigation}) {
+export default function WelcomePage({navigation}) {
+  const {user, logout} = useAuth();
+
+  const handleLogout = async () => {
+    await logout();
+    Alert.alert('Wylogowano', 'Zostałeś wylogowany pomyślnie.');
+  };
+
   return (
     <View className="flex-1 items-center justify-center bg-gray-100">
       <LinearGradient
@@ -24,10 +32,7 @@ export default function HomePage({navigation}) {
         Legnica Kebab City Tour jest to aplikacja oraz witryna internetowa
         służąca pomocą w odnalezieniu lokalizacji wszystkich dostępnych, w
         planach oraz zamkniętych punktów gastronomicznych serwujących słynne
-        Kebaby. Poniższe przyciski pokierują Cię dalej. Wybierz przycisk "Mapa"
-        aby bezpośrednio odnaleźć Kebaby rozsiane po Legnicy. Możesz też
-        utworzyć konto lub zalogować się aby dodać Twojego ulubionego Kebaba do
-        zakładki "Ulubione", dzięki czemu łatwiej go odnajdziesz!!
+        Kebaby.
       </Text>
 
       <TouchableOpacity
@@ -36,13 +41,23 @@ export default function HomePage({navigation}) {
         <Text className="text-lg font-bold text-white uppercase">Mapa</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity
-        className="bg-button-green py-3 rounded-full w-[75%] items-center"
-        onPress={() => navigation.navigate('AuthPage')}>
-        <Text className="text-lg font-bold text-white uppercase">
-          Logowanie
-        </Text>
-      </TouchableOpacity>
+      {user ? (
+        <TouchableOpacity
+          className="bg-red-600 py-3 rounded-full w-[75%] items-center"
+          onPress={handleLogout}>
+          <Text className="text-lg font-bold text-white uppercase">
+            Wyloguj
+          </Text>
+        </TouchableOpacity>
+      ) : (
+        <TouchableOpacity
+          className="bg-button-green py-3 rounded-full w-[75%] items-center"
+          onPress={() => navigation.navigate('AuthPage')}>
+          <Text className="text-lg font-bold text-white uppercase">
+            Logowanie
+          </Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 }
