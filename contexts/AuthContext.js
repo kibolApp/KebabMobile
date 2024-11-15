@@ -6,7 +6,7 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({children}) => {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
+  const [authToken, setAuthToken] = useState(null);
 
   useEffect(() => {
     const checkUser = async () => {
@@ -14,7 +14,7 @@ export const AuthProvider = ({children}) => {
       const storedUser = await AsyncStorage.getItem('user');
       if (storedToken && storedUser) {
         setUser(JSON.parse(storedUser));
-        setToken(storedToken);
+        setAuthToken(storedToken);
       }
     };
 
@@ -23,35 +23,30 @@ export const AuthProvider = ({children}) => {
 
   const login = async (userData, token) => {
     setUser(userData);
-    setToken(token);
+    setAuthToken(token);
     await AsyncStorage.setItem('authToken', token);
     await AsyncStorage.setItem('user', JSON.stringify(userData));
   };
 
   const logout = async () => {
     try {
-      if (token) {
+      if (authToken) {
         await AxiosClient.post(
           '/logout',
           {},
           {
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${authToken}`,
             },
           },
         );
       }
 
       setUser(null);
-      setToken(null);
+      setAuthToken(null);
       await AsyncStorage.removeItem('authToken');
       await AsyncStorage.removeItem('user');
-    } catch (error) {
-      console.error(
-        'Error during logout:',
-        error.response?.data || error.message,
-      );
-    }
+    } catch (error) {}
   };
 
   return (

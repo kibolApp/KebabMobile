@@ -20,12 +20,7 @@ export default function Login({toggleForm}) {
       Alert.alert('Sukces', `Witaj ${user.name}!`);
       navigation.navigate('WelcomePage');
     } catch (error) {
-      console.error(
-        'Error during login:',
-        error.response?.data || error.message,
-      );
-      const message =
-        error.response?.data?.message || 'Wystąpił problem z logowaniem';
+      const message = 'Podano błędny adres mailowy lub hasło';
       Alert.alert('Błąd', message);
     }
   };

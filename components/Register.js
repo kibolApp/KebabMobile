@@ -19,12 +19,7 @@ export default function Register({toggleForm}) {
       Alert.alert('Sukces', 'Rejestracja zakończona pomyślnie');
       toggleForm();
     } catch (error) {
-      console.error(
-        'Error during registration:',
-        error.response?.data || error.message,
-      );
-      const message =
-        error.response?.data?.message || 'Wystąpił problem z rejestracją';
+      const message = 'Wystąpił problem z rejestracją';
       Alert.alert('Błąd', message);
     }
   };
