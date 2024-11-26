@@ -9,7 +9,7 @@ module.exports = {
       colors: {
         'custom-green': '#283618',
         'custom-beige': '#D8D9CE',
-        'white': '#FFFFFF',
+        white: '#FFFFFF',
       },
     },
   },
