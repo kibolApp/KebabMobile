@@ -5,10 +5,12 @@ import MapView from 'react-native-maps';
 import { Ionicons } from '@expo/vector-icons';
 import Navbar from '../components/Navbar';
 import KebabListModal from '../components/KebabListModal';
+import ContactUsModal from '../components/ContactUsModal';
 
 export default function HomePage() {
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
+  const [contactModalVisible, setContactModalVisible] = useState(false);
 
   return (
     <View className="flex-1 bg-custom-beige">
@@ -25,6 +27,13 @@ export default function HomePage() {
       />
 
       <TouchableOpacity
+        className="absolute top-24 left-5 bg-custom-green p-3 rounded-md"
+        onPress={() => setContactModalVisible(true)}
+      >
+        <Ionicons name="mail" size={25} color="#FFFFFF" />
+      </TouchableOpacity>
+
+      <TouchableOpacity
         className="absolute top-24 right-5 bg-custom-green p-3 rounded-md flex-row items-center"
         onPress={() => setModalVisible(true)}
       >
@@ -33,6 +42,8 @@ export default function HomePage() {
       </TouchableOpacity>
 
       <KebabListModal modalVisible={modalVisible} setModalVisible={setModalVisible} />
+
+      <ContactUsModal visible={contactModalVisible} onClose={() => setContactModalVisible(false)} />
     </View>
   );
 }
