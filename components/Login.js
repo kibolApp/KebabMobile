@@ -1,7 +1,30 @@
-import React from 'react';
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
+import React, {useState} from 'react';
+import {View, Text, TextInput, TouchableOpacity, Alert} from 'react-native';
+import AxiosClient from '../AxiosClient';
+import {useNavigation} from '@react-navigation/native';
+import {useAuth} from '../contexts/AuthContext';
 
-export default function Login({ toggleForm }) {
+export default function Login({toggleForm}) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const {login} = useAuth();
+  const navigation = useNavigation();
+
+  const handleLogin = async () => {
+    try {
+      const response = await AxiosClient.post('/login', {email, password});
+      const {token, user} = response.data;
+
+      await login(user, token);
+
+      Alert.alert('Sukces', `Witaj ${user.name}!`);
+      navigation.navigate('WelcomePage');
+    } catch (error) {
+      const message = 'Podano błędny adres mailowy lub hasło';
+      Alert.alert('Błąd', message);
+    }
+  };
+
   return (
     <View className="flex-1 justify-center p-5">
       <View className="bg-white rounded-lg p-8 shadow-lg">
@@ -10,17 +33,22 @@ export default function Login({ toggleForm }) {
           className="p-3 border border-gray-300 rounded mb-4"
           placeholder="Adres E-mail"
           keyboardType="email-address"
+          value={email}
+          onChangeText={setEmail}
         />
         <TextInput
           className="p-3 border border-gray-300 rounded mb-4"
           placeholder="Hasło"
           secureTextEntry
+          value={password}
+          onChangeText={setPassword}
         />
         <TouchableOpacity
-          className="bg-button-green py-3 mb-4 w-full items-center"
-          onPress={() => console.log('Login')}
-        >
-          <Text className="text-lg font-bold text-white uppercase">Zaloguj się</Text>
+          className="bg-custom-green py-3 mb-4 w-full items-center"
+          onPress={handleLogin}>
+          <Text className="text-lg font-bold text-white uppercase">
+            Zaloguj się
+          </Text>
         </TouchableOpacity>
         <Text className="text-center mt-4">
           Nie posiadasz konta?{' '}
