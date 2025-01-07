@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, View, Text, TouchableOpacity, FlatList, Alert, Image } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
-import { Linking } from 'react-native';
+import { Modal, View, Text, TouchableOpacity, FlatList, Alert, Image, Linking, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { Picker } from '@react-native-picker/picker';
 import AxiosClient from '../AxiosClient';
 
 const KebabListModal = ({ modalVisible, setModalVisible }) => {
@@ -10,9 +9,16 @@ const KebabListModal = ({ modalVisible, setModalVisible }) => {
   const [filteredKebabs, setFilteredKebabs] = useState([]);
   const [page, setPage] = useState(1);
   const [itemsPerPage] = useState(5);
-  const [sortBy, setSortBy] = useState('nameAsc');
   const [filterStatus, setFilterStatus] = useState('all');
+  const [filterMeat, setFilterMeat] = useState([]);
+  const [filterSauces, setFilterSauces] = useState([]);
+  const [filterCraft, setFilterCraft] = useState(null);
+  const [filterPremises, setFilterPremises] = useState(null);
+  const [filterChainstore, setFilterChainstore] = useState(null);
   const [expandedKebab, setExpandedKebab] = useState(null);
+  const [showFilter, setShowFilter] = useState(false);
+
+  const [showFilterModal, setShowFilterModal] = useState(false);
 
   const daysOfWeekPL = {
     monday: 'Poniedziałek',
@@ -50,49 +56,56 @@ const KebabListModal = ({ modalVisible, setModalVisible }) => {
       }
     };
 
-    let filteredList = kebabs;
+    const filterKebabs = () => {
+      let filteredList = kebabs;
 
-    if (filterStatus !== 'all') {
-      filteredList = kebabs.filter((kebab) => {
-        const status = filterByStatus(kebab);
-        return (
-          (filterStatus === 'open' && status === 'open') ||
-          (filterStatus === 'closed' && status === 'closed') ||
-          (filterStatus === 'planned' && status === 'planned')
-        );
-      });
-    } else {
-      filteredList = kebabs.map((kebab) => ({
-        ...kebab,
-        status: filterByStatus(kebab),
-      }));
-    }
-
-    const sortData = (list) => {
-      switch (sortBy) {
-        case 'nameAsc':
-          return list.sort((a, b) => a.name.localeCompare(b.name));
-        case 'nameDesc':
-          return list.sort((a, b) => b.name.localeCompare(a.name));
-       case 'openingYearAsc':
-          return;
-        case 'openingYearDesc':
-          return;
-        case 'closingYearAsc':
-          return;
-        case 'closingYearDesc':
-          return;
-        case 'ratingAsc':
-          return;
-        case 'ratingDesc':
-          return ;
-        default:
-          return list;
+      if (filterStatus !== 'all') {
+        filteredList = filteredList.filter((kebab) => {
+          const status = filterByStatus(kebab);
+          return (
+            (filterStatus === 'open' && status === 'open') ||
+            (filterStatus === 'closed' && status === 'closed') ||
+            (filterStatus === 'planned' && status === 'planned')
+          );
+        });
       }
+
+      if (filterMeat.length > 0) {
+        filteredList = filteredList.filter(kebab =>
+          filterMeat.every(meat => kebab.meats.includes(meat))
+        );
+      }
+
+      if (filterSauces.length > 0) {
+        filteredList = filteredList.filter(kebab =>
+          filterSauces.every(sauce => kebab.sauces.includes(sauce))
+        );
+      }
+
+      if (filterCraft !== null) {
+        filteredList = filteredList.filter(kebab => kebab.is_crafted === filterCraft);
+      }
+
+      if (filterPremises !== null) {
+        filteredList = filteredList.filter(kebab => kebab.is_premises === filterPremises);
+      }
+
+      if (filterChainstore !== null) {
+        filteredList = filteredList.filter(kebab => kebab.is_chainstore === filterChainstore);
+      }
+
+      filteredList = filteredList.sort((a, b) => {
+        if (a.name.toLowerCase() < b.name.toLowerCase()) return -1;
+        if (a.name.toLowerCase() > b.name.toLowerCase()) return 1;
+        return 0;
+      });
+
+      setFilteredKebabs(filteredList);
     };
 
-    setFilteredKebabs(sortData(filteredList));
-  }, [kebabs, filterStatus, sortBy]);
+    filterKebabs();
+  }, [kebabs, filterStatus, filterMeat, filterSauces, filterCraft, filterPremises, filterChainstore]);
+
 
   const currentPageData = filteredKebabs.slice((page - 1) * itemsPerPage, page * itemsPerPage);
 
@@ -123,7 +136,7 @@ const KebabListModal = ({ modalVisible, setModalVisible }) => {
           <Text className="text-sm text-gray-600">Godziny otwarcia:</Text>
           {Object.entries(item.opening_hours).map(([day, hours]) => (
             <Text key={day} className="text-sm text-gray-500">
-              {`${daysOfWeekPL[day]}: ${hours}`}
+              {daysOfWeekPL[day]}: {hours}
             </Text>
           ))}
 
@@ -149,6 +162,18 @@ const KebabListModal = ({ modalVisible, setModalVisible }) => {
     </View>
   );
 
+  const CustomCheckbox = ({ label, isSelected, onToggle }) => (
+    <TouchableOpacity
+      className="flex-row items-center my-1"
+      onPress={onToggle}
+    >
+     <View
+       className={`w-5 h-5 border-2 border-gray-800 ${isSelected ? 'bg-blue-500' : 'bg-white'} rounded-sm mr-2`}
+     />
+      <Text>{label}</Text>
+    </TouchableOpacity>
+  );
+
   return (
     <Modal
       animationType="slide"
@@ -157,7 +182,7 @@ const KebabListModal = ({ modalVisible, setModalVisible }) => {
       onRequestClose={() => setModalVisible(false)}
     >
       <View className="flex-1 bg-black/50 justify-end">
-        <View className="bg-white p-5 rounded-t-lg w-full max-h-[90%] shadow-lg">
+        <View className="bg-white p-5 rounded-t-lg w-full max-h-[90%] shadow-lg mt-[50px]">
           <TouchableOpacity
             className="absolute top-2 right-2"
             onPress={() => setModalVisible(false)}
@@ -166,32 +191,16 @@ const KebabListModal = ({ modalVisible, setModalVisible }) => {
           </TouchableOpacity>
           <Text className="text-xl font-bold mb-4 text-center">Lista Kebabów</Text>
 
-          <View className="mb-4">
-            <Picker selectedValue={filterStatus} onValueChange={(value) => setFilterStatus(value)}>
-              <Picker.Item label="Wszystkie" value="all" />
-              <Picker.Item label="Otwarte" value="open" />
-              <Picker.Item label="Zamknięte" value="closed" />
-              <Picker.Item label="Planujące otwarcie" value="planned" />
-            </Picker>
+          <TouchableOpacity onPress={() => setShowFilterModal(true)}>
+            <Text className="text-blue-500">Pokaż filtry</Text>
+          </TouchableOpacity>
 
-            <Picker selectedValue={sortBy} onValueChange={(value) => setSortBy(value)}>
-              <Picker.Item label="Nazwa rosnąco" value="nameAsc" />
-              <Picker.Item label="Nazwa malejąco" value="nameDesc" />
-              <Picker.Item label="Rok otwarcia rosnąco" value="openingYearAsc" />
-              <Picker.Item label="Rok otwarcia malejąco" value="openingYearDesc" />
-              <Picker.Item label="Rok zamknięcia rosnąco" value="closingYearAsc" />
-              <Picker.Item label="Rok zamknięcia malejąco" value="closingYearDesc" />
-              <Picker.Item label="Ocena rosnąco" value="ratingAsc" />
-              <Picker.Item label="Ocena malejąco" value="ratingDesc" />
-            </Picker>
-          </View>
-
-          <FlatList
-            data={currentPageData}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={renderItem}
-            contentContainerStyle={{ paddingBottom: 10 }}
-          />
+         <FlatList
+           data={currentPageData}
+           keyExtractor={(item) => item.id.toString()}
+           renderItem={renderItem}
+           contentContainerStyle="pb-2"
+         />
 
           <View className="flex-row justify-between mt-4">
             <TouchableOpacity
@@ -212,6 +221,192 @@ const KebabListModal = ({ modalVisible, setModalVisible }) => {
           </View>
         </View>
       </View>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={showFilterModal}
+        onRequestClose={() => setShowFilterModal(false)}
+      >
+        <View className="flex-1 bg-black/50 justify-center">
+          <View className="bg-white p-5 rounded-lg w-full max-w-md shadow-lg mt-[50px]">
+            <TouchableOpacity
+              className="absolute top-2 right-2"
+              onPress={() => setShowFilterModal(false)}
+            >
+              <Ionicons name="close" size={25} color="black" />
+            </TouchableOpacity>
+            <Text className="text-xl font-bold mb-4 text-center">Filtry</Text>
+
+            <ScrollView className="mb-4">
+              <Text className="font-semibold">Filtruj według:</Text>
+
+              <Picker selectedValue={filterStatus} onValueChange={(value) => setFilterStatus(value)}>
+                <Picker.Item label="Wszystkie" value="all" />
+                <Picker.Item label="Otwarte" value="open" />
+                <Picker.Item label="Zamknięte" value="closed" />
+                <Picker.Item label="Planujące otwarcie" value="planned" />
+              </Picker>
+
+              <View>
+                <Text className="font-semibold mt-2">Wybierz mięso:</Text>
+                <CustomCheckbox
+                  label="Kurczak"
+                  isSelected={filterMeat.includes('kurczak')}
+                  onToggle={() =>
+                    setFilterMeat(prev => prev.includes('kurczak') ? prev.filter(item => item !== 'kurczak') : [...prev, 'kurczak'])
+                  }
+                />
+                <CustomCheckbox
+                  label="Wieprzowina"
+                  isSelected={filterMeat.includes('wieprzowina')}
+                  onToggle={() =>
+                    setFilterMeat(prev => prev.includes('wieprzowina') ? prev.filter(item => item !== 'wieprzowina') : [...prev, 'wieprzowina'])
+                  }
+                />
+                <CustomCheckbox
+                  label="Mieszane"
+                  isSelected={filterMeat.includes('mieszane')}
+                  onToggle={() =>
+                    setFilterMeat(prev => prev.includes('mieszane') ? prev.filter(item => item !== 'mieszane') : [...prev, 'mieszane'])
+                  }
+                />
+                <CustomCheckbox
+                  label="Falafel"
+                  isSelected={filterMeat.includes('falafel')}
+                  onToggle={() =>
+                    setFilterMeat(prev => prev.includes('falafel') ? prev.filter(item => item !== 'falafel') : [...prev, 'falafel'])
+                  }
+                />
+                <CustomCheckbox
+                  label="Kapsalon"
+                  isSelected={filterMeat.includes('kapsalon')}
+                  onToggle={() =>
+                    setFilterMeat(prev => prev.includes('kapsalon') ? prev.filter(item => item !== 'kapsalon') : [...prev, 'kapsalon'])
+                  }
+                />
+                <CustomCheckbox
+                  label="Baran"
+                  isSelected={filterMeat.includes('baran')}
+                  onToggle={() =>
+                    setFilterMeat(prev => prev.includes('baran') ? prev.filter(item => item !== 'baran') : [...prev, 'baran'])
+                  }
+                />
+                <CustomCheckbox
+                  label="Wołowina"
+                  isSelected={filterMeat.includes('wołowina')}
+                  onToggle={() =>
+                    setFilterMeat(prev => prev.includes('wołowina') ? prev.filter(item => item !== 'wołowina') : [...prev, 'wołowina'])
+                  }
+                />
+              </View>
+
+              <View>
+                <Text className="font-semibold mt-2">Wybierz sos:</Text>
+                <CustomCheckbox
+                  label="Łagodny"
+                  isSelected={filterSauces.includes('łagodny')}
+                  onToggle={() =>
+                    setFilterSauces(prev => prev.includes('łagodny') ? prev.filter(item => item !== 'łagodny') : [...prev, 'łagodny'])
+                  }
+                />
+                <CustomCheckbox
+                  label="Ostry"
+                  isSelected={filterSauces.includes('ostry')}
+                  onToggle={() =>
+                    setFilterSauces(prev => prev.includes('ostry') ? prev.filter(item => item !== 'ostry') : [...prev, 'ostry'])
+                  }
+                />
+                <CustomCheckbox
+                  label="Mieszany"
+                  isSelected={filterSauces.includes('mieszany')}
+                  onToggle={() =>
+                    setFilterSauces(prev => prev.includes('mieszany') ? prev.filter(item => item !== 'mieszany') : [...prev, 'mieszany'])
+                  }
+                />
+                <CustomCheckbox
+                  label="Czosnek"
+                  isSelected={filterSauces.includes('czosnek')}
+                  onToggle={() =>
+                    setFilterSauces(prev => prev.includes('czosnek') ? prev.filter(item => item !== 'czosnek') : [...prev, 'czosnek'])
+                  }
+                />
+                <CustomCheckbox
+                  label="Ziołowy"
+                  isSelected={filterSauces.includes('ziołowy')}
+                  onToggle={() =>
+                    setFilterSauces(prev => prev.includes('ziołowy') ? prev.filter(item => item !== 'ziołowy') : [...prev, 'ziołowy'])
+                  }
+                />
+                <CustomCheckbox
+                  label="Arabski"
+                  isSelected={filterSauces.includes('arabski')}
+                  onToggle={() =>
+                    setFilterSauces(prev => prev.includes('arabski') ? prev.filter(item => item !== 'arabski') : [...prev, 'arabski'])
+                  }
+                />
+                <CustomCheckbox
+                  label="Miętowy"
+                  isSelected={filterSauces.includes('miętowy')}
+                  onToggle={() =>
+                    setFilterSauces(prev => prev.includes('miętowy') ? prev.filter(item => item !== 'miętowy') : [...prev, 'miętowy'])
+                  }
+                />
+                <CustomCheckbox
+                  label="Musztardowy"
+                  isSelected={filterSauces.includes('musztardowy')}
+                  onToggle={() =>
+                    setFilterSauces(prev => prev.includes('musztardowy') ? prev.filter(item => item !== 'musztardowy') : [...prev, 'musztardowy'])
+                  }
+                />
+                <CustomCheckbox
+                  label="Czosnkowy"
+                  isSelected={filterSauces.includes('czosnkowy')}
+                  onToggle={() =>
+                    setFilterSauces(prev => prev.includes('czosnkowy') ? prev.filter(item => item !== 'czosnkowy') : [...prev, 'czosnkowy'])
+                  }
+                />
+                <CustomCheckbox
+                  label="Miodowo-Musztardowy"
+                  isSelected={filterSauces.includes('miodowo-musztardowy')}
+                  onToggle={() =>
+                    setFilterSauces(prev => prev.includes('miodowo-musztardowy') ? prev.filter(item => item !== 'miodowo-musztardowy') : [...prev, 'miodowo-musztardowy'])
+                  }
+                />
+                <CustomCheckbox
+                  label="Sriracha Mayo"
+                  isSelected={filterSauces.includes('sriracha mayo')}
+                  onToggle={() =>
+                    setFilterSauces(prev => prev.includes('sriracha mayo') ? prev.filter(item => item !== 'sriracha mayo') : [...prev, 'sriracha mayo'])
+                  }
+                />
+                <CustomCheckbox
+                  label="Salsa Verde"
+                  isSelected={filterSauces.includes('salsa verde')}
+                  onToggle={() =>
+                    setFilterSauces(prev => prev.includes('salsa verde') ? prev.filter(item => item !== 'salsa verde') : [...prev, 'salsa verde'])
+                  }
+                />
+              </View>
+
+              <Picker selectedValue={filterCraft} onValueChange={(value) => setFilterCraft(value)}>
+                <Picker.Item label="Kraftowy" value={1} />
+                <Picker.Item label="Bez kraftowego" value={0} />
+              </Picker>
+
+              <Picker selectedValue={filterPremises} onValueChange={(value) => setFilterPremises(value)}>
+                <Picker.Item label="W budynku" value={1} />
+                <Picker.Item label="W budce" value={0} />
+              </Picker>
+
+              <Picker selectedValue={filterChainstore} onValueChange={(value) => setFilterChainstore(value)}>
+                <Picker.Item label="Sieciowy" value={1} />
+                <Picker.Item label="Bez sieciowego" value={0} />
+              </Picker>
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
     </Modal>
   );
 };
