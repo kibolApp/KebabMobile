@@ -3,6 +3,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {AuthProvider} from './contexts/AuthContext';
 import WelcomePage from './screens/WelcomePage';
+import SuggestionsManagement from './screens/SuggestionsManagement';
 import AuthPage from './screens/AuthPage';
 import HomePage from './screens/HomePage';
 
@@ -26,6 +27,11 @@ function App(): React.JSX.Element {
           <Stack.Screen
             name="HomePage"
             component={HomePage}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="SuggestionsManagement"
+            component={SuggestionsManagement}
             options={{headerShown: false}}
           />
         </Stack.Navigator>
