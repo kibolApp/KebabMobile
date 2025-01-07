@@ -10,8 +10,19 @@ const KebabListModal = ({ modalVisible, setModalVisible }) => {
   const [filteredKebabs, setFilteredKebabs] = useState([]);
   const [page, setPage] = useState(1);
   const [itemsPerPage] = useState(5);
-  const [sortBy, setSortBy] = useState('name');
+  const [sortBy, setSortBy] = useState('nameAsc');
   const [filterStatus, setFilterStatus] = useState('all');
+  const [expandedKebab, setExpandedKebab] = useState(null);
+
+  const daysOfWeekPL = {
+    monday: 'Poniedziałek',
+    tuesday: 'Wtorek',
+    wednesday: 'Środa',
+    thursday: 'Czwartek',
+    friday: 'Piątek',
+    saturday: 'Sobota',
+    sunday: 'Niedziela',
+  };
 
   useEffect(() => {
     const fetchKebabs = async () => {
@@ -33,115 +44,108 @@ const KebabListModal = ({ modalVisible, setModalVisible }) => {
       if (kebab.status === 'exists') {
         return 'open';
       } else if (kebab.status === 'closed') {
-      return 'closed';
+        return 'closed';
       } else {
-      return 'planned';
+        return 'planned';
       }
-
-      const now = new Date();
-      const dayOfWeek = now.toLocaleString('en-EN', { weekday: 'long' }).toLowerCase();
-      const openingHours = kebab.opening_hours[dayOfWeek];
-
-      if (openingHours) {
-        const [start, end] = openingHours.split('-');
-        const startTime = new Date(`${now.toDateString()} ${start}`);
-        const endTime = new Date(`${now.toDateString()} ${end}`);
-
-        if (now >= startTime && now <= endTime) {
-          return 'open';
-        } else {
-          return 'closed';
-        }
-      }
-      return 'planned';
     };
-
 
     let filteredList = kebabs;
 
     if (filterStatus !== 'all') {
-      filteredList = kebabs.filter(kebab => {
+      filteredList = kebabs.filter((kebab) => {
         const status = filterByStatus(kebab);
-        return (filterStatus === 'open' && status === 'open') ||
-               (filterStatus === 'closed' && status === 'closed') ||
-               (filterStatus === 'planned' && status === 'planned');
+        return (
+          (filterStatus === 'open' && status === 'open') ||
+          (filterStatus === 'closed' && status === 'closed') ||
+          (filterStatus === 'planned' && status === 'planned')
+        );
       });
     } else {
-      filteredList = kebabs.map(kebab => ({
+      filteredList = kebabs.map((kebab) => ({
         ...kebab,
         status: filterByStatus(kebab),
       }));
     }
 
-    const statusPriority = {
-      'open': 1,
-      'planned': 2,
-      'closed': 3
+    const sortData = (list) => {
+      switch (sortBy) {
+        case 'nameAsc':
+          return list.sort((a, b) => a.name.localeCompare(b.name));
+        case 'nameDesc':
+          return list.sort((a, b) => b.name.localeCompare(a.name));
+       case 'openingYearAsc':
+          return;
+        case 'openingYearDesc':
+          return;
+        case 'closingYearAsc':
+          return;
+        case 'closingYearDesc':
+          return;
+        case 'ratingAsc':
+          return;
+        case 'ratingDesc':
+          return ;
+        default:
+          return list;
+      }
     };
 
-    filteredList.sort((a, b) => {
-      const statusA = a.status;
-      const statusB = b.status;
-      const statusComparison = statusPriority[statusA] - statusPriority[statusB];
-
-      if (statusComparison !== 0) {
-        return statusComparison;
-      }
-
-      if (sortBy === 'name') {
-        return a.name.localeCompare(b.name);
-      } else if (sortBy === 'openingYear') {
-        return a.opening_year - b.opening_year;
-      } else if (sortBy === 'closingYear') {
-        return a.closing_year - b.closing_year;
-      } else if (sortBy === 'rating') {
-        return b.rating - a.rating;
-      }
-
-      return 0;
-    });
-
-    setFilteredKebabs(filteredList);
-  }, [kebabs, sortBy, filterStatus]);
+    setFilteredKebabs(sortData(filteredList));
+  }, [kebabs, filterStatus, sortBy]);
 
   const currentPageData = filteredKebabs.slice((page - 1) * itemsPerPage, page * itemsPerPage);
 
   const renderItem = ({ item }) => (
-    <View className="flex-row justify-between items-start p-4 border-b border-gray-300">
-      {item.logo && (
-        <Image
-          source={{ uri: item.logo }}
-          className="w-12 h-12 rounded-lg mr-2"
+    <View className="border-b border-gray-300">
+      <TouchableOpacity
+        className="flex-row justify-between items-center p-4"
+        onPress={() => setExpandedKebab(expandedKebab === item.id ? null : item.id)}
+      >
+        <View className="flex-row items-center">
+          {item.logo && (
+            <Image source={{ uri: item.logo }} className="w-12 h-12 rounded-lg mr-2" />
+          )}
+          <View>
+            <Text className="text-lg font-semibold text-gray-800">{item.name}</Text>
+            <Text className="text-sm text-gray-500">{item.address}</Text>
+          </View>
+        </View>
+        <Ionicons
+          name={expandedKebab === item.id ? 'chevron-up' : 'chevron-down'}
+          size={24}
+          color="black"
         />
-      )}
-      <View className="flex-1">
-        <Text className="text-lg font-semibold text-gray-800">{item.name}</Text>
-        <Text className="text-sm text-gray-500">{item.address}</Text>
+      </TouchableOpacity>
 
-        <Text className="text-sm text-gray-600 mt-2">Godziny otwarcia:</Text>
-        <View className="mt-2">
+      {expandedKebab === item.id && (
+        <View className="p-4 bg-gray-100">
+          <Text className="text-sm text-gray-600">Godziny otwarcia:</Text>
           {Object.entries(item.opening_hours).map(([day, hours]) => (
             <Text key={day} className="text-sm text-gray-500">
-              {`${day.charAt(0).toUpperCase() + day.slice(1)}: ${hours}`}
+              {`${daysOfWeekPL[day]}: ${hours}`}
             </Text>
           ))}
+
+          <Text className="text-sm text-gray-600 mt-2">Dostępne sosy:</Text>
+          <Text className="text-sm text-gray-500">{item.sauces.join(', ')}</Text>
+
+          <Text className="text-sm text-gray-600 mt-2">Rodzaje mięs:</Text>
+          <Text className="text-sm text-gray-500">{item.meats.join(', ')}</Text>
+
+          <Text className="text-sm text-gray-600 mt-2">Opcje zamówienia:</Text>
+          <Text className="text-sm text-gray-500">{item.ordering_options.join(', ')}</Text>
+
+          {item.pages && item.pages['pyszne.pl'] && (
+            <Text
+              className="text-sm text-blue-500 mt-2"
+              onPress={() => Linking.openURL(item.pages['pyszne.pl'])}
+            >
+              Menu na Pyszne.pl
+            </Text>
+          )}
         </View>
-
-        <Text className="text-sm text-gray-600 mt-2">Dostępne sosy:</Text>
-        <Text className="text-sm text-gray-500">{item.sauces.join(', ')}</Text>
-
-        <Text className="text-sm text-gray-600 mt-2">Rodzaje mięs:</Text>
-        <Text className="text-sm text-gray-500">{item.meats.join(', ')}</Text>
-
-        <Text className="text-sm text-gray-600 mt-2">Opcje zamówienia:</Text>
-        <Text className="text-sm text-gray-500">{item.ordering_options.join(', ')}</Text>
-
-        {item.pages && item.pages['pyszne.pl'] && (
-          <Text className="text-sm text-blue-500 mt-2" onPress={() => Linking.openURL(item.pages['pyszne.pl'])}>
-            Menu na Pyszne.pl
-          </Text>
-        )}
-      </View>
+      )}
     </View>
   );
 
@@ -163,24 +167,22 @@ const KebabListModal = ({ modalVisible, setModalVisible }) => {
           <Text className="text-xl font-bold mb-4 text-center">Lista Kebabów</Text>
 
           <View className="mb-4">
-            <Picker
-              selectedValue={filterStatus}
-              onValueChange={value => setFilterStatus(value)}
-            >
+            <Picker selectedValue={filterStatus} onValueChange={(value) => setFilterStatus(value)}>
               <Picker.Item label="Wszystkie" value="all" />
               <Picker.Item label="Otwarte" value="open" />
               <Picker.Item label="Zamknięte" value="closed" />
               <Picker.Item label="Planujące otwarcie" value="planned" />
             </Picker>
 
-            <Picker
-              selectedValue={sortBy}
-              onValueChange={value => setSortBy(value)}
-            >
-              <Picker.Item label="Sortuj po nazwie" value="name" />
-              <Picker.Item label="Sortuj po roku otwarcia" value="openingYear" />
-              <Picker.Item label="Sortuj po roku zamknięcia" value="closingYear" />
-              <Picker.Item label="Sortuj po ocenie" value="rating" />
+            <Picker selectedValue={sortBy} onValueChange={(value) => setSortBy(value)}>
+              <Picker.Item label="Nazwa rosnąco" value="nameAsc" />
+              <Picker.Item label="Nazwa malejąco" value="nameDesc" />
+              <Picker.Item label="Rok otwarcia rosnąco" value="openingYearAsc" />
+              <Picker.Item label="Rok otwarcia malejąco" value="openingYearDesc" />
+              <Picker.Item label="Rok zamknięcia rosnąco" value="closingYearAsc" />
+              <Picker.Item label="Rok zamknięcia malejąco" value="closingYearDesc" />
+              <Picker.Item label="Ocena rosnąco" value="ratingAsc" />
+              <Picker.Item label="Ocena malejąco" value="ratingDesc" />
             </Picker>
           </View>
 
@@ -200,7 +202,9 @@ const KebabListModal = ({ modalVisible, setModalVisible }) => {
             </TouchableOpacity>
             <Text>{`Strona ${page}`}</Text>
             <TouchableOpacity
-              onPress={() => setPage(page < Math.ceil(filteredKebabs.length / itemsPerPage) ? page + 1 : page)}
+              onPress={() =>
+                setPage(page < Math.ceil(filteredKebabs.length / itemsPerPage) ? page + 1 : page)
+              }
               disabled={page >= Math.ceil(filteredKebabs.length / itemsPerPage)}
             >
               <Text className="text-blue-500">Następna</Text>
