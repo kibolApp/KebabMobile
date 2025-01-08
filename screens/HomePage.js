@@ -29,12 +29,14 @@ export default function HomePage() {
       />
 
       <View className="absolute top-24 left-5 flex-row space-x-4">
-        <TouchableOpacity
-          className="bg-custom-green p-3 rounded-md"
-          onPress={() => setContactModalVisible(true)}
-        >
-          <Ionicons name="mail" size={25} color="#FFFFFF" />
-        </TouchableOpacity>
+        {user && (
+          <TouchableOpacity
+            className="bg-custom-green p-3 rounded-md"
+            onPress={() => setContactModalVisible(true)}
+          >
+            <Ionicons name="mail" size={25} color="#FFFFFF" />
+          </TouchableOpacity>
+        )}
 
         {user?.isAdmin && (
           <TouchableOpacity
