@@ -243,7 +243,7 @@ const KebabListModal = ({modalVisible, setModalVisible}) => {
             </TouchableOpacity>
             <Picker
               selectedValue={sortOption || 'name_asc'}
-              className="h-10 w-36 z-10"
+              style={{height: 40, width: 150, zIndex: 1}}
               onValueChange={value => setSortOption(value)}>
               <Picker.Item label="Sortuj" value={null} />
               <Picker.Item label="Nazwa rosnąco" value="name_asc" />
