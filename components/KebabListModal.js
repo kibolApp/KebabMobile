@@ -34,38 +34,32 @@ const KebabListModal = ({modalVisible, setModalVisible, user}) => {
   const [favoriteKebabs, setFavoriteKebabs] = useState([]);
   const userId = user?.id;
 
-  const handleFavoriteToggle = async kebabId => {
-    if (!userId) {
-      Alert.alert('Błąd', 'Nie jesteś zalogowany.');
-      return;
-    }
+ const handleFavoriteToggle = async (kebabId) => {
+   if (!userId) {
+     Alert.alert('Błąd', 'Nie jesteś zalogowany.');
+     return;
+   }
 
-    try {
-      const isFavorite = favoriteKebabs.includes(kebabId);
+   try {
+     const isFavorite = favoriteKebabs.includes(kebabId);
 
-      if (isFavorite) {
-        console.log('Removing from favorites:', kebabId);
-        const response = await AxiosClient.post('/remfav', {
-          user_id: userId,
-          kebab_id: kebabId,
-        });
-        console.log('Response:', response.data);
-        setFavoriteKebabs(prev => prev.filter(id => id !== kebabId));
-      } else {
-        console.log('Adding to favorites:', kebabId);
-        const response = await AxiosClient.post('/addfav', {
-          user_id: userId,
-          kebab_id: kebabId,
-        });
-        console.log('Response:', response.data);
-        setFavoriteKebabs(prev => [...prev, kebabId]);
-      }
-    } catch (error) {
-      console.error('Favorite toggle error:', error);
-      Alert.alert('Błąd', 'Nie udało się zmienić ulubionych.');
-    }
-  };
-
+     if (isFavorite) {
+       const response = await AxiosClient.post('/remfav', {
+         user_id: userId,
+         kebab_id: kebabId,
+       });
+       setFavoriteKebabs((prev) => prev.filter((id) => id !== kebabId));
+     } else {
+       const response = await AxiosClient.post('/addfav', {
+         user_id: userId,
+         kebab_id: kebabId,
+       });
+       setFavoriteKebabs((prev) => [...prev, kebabId]);
+     }
+   } catch (error) {
+     Alert.alert('Błąd', 'Nie udało się zmienić ulubionych.');
+   }
+ };
 
   const daysOfWeekPL = {
     monday: 'Poniedziałek',
@@ -107,7 +101,6 @@ const KebabListModal = ({modalVisible, setModalVisible, user}) => {
      fetchKebabs();
    }
  }, [modalVisible, userId]);
-
 
   useEffect(() => {
     const filterByStatus = kebab => {
@@ -181,6 +174,17 @@ const KebabListModal = ({modalVisible, setModalVisible, user}) => {
         }
       }
 
+        if (!sortOption) {
+            const favoriteKebabsList = filteredList.filter(kebab =>
+              favoriteKebabs.includes(kebab.id),
+            );
+            const nonFavoriteKebabsList = filteredList.filter(
+              kebab => !favoriteKebabs.includes(kebab.id),
+            );
+
+            filteredList = [...favoriteKebabsList, ...nonFavoriteKebabsList];
+          }
+
       setFilteredKebabs(filteredList);
     };
 
@@ -194,6 +198,7 @@ const KebabListModal = ({modalVisible, setModalVisible, user}) => {
     filterPremises,
     filterChainstore,
     sortOption,
+      favoriteKebabs,
   ]);
 
   const currentPageData = filteredKebabs.slice(
