@@ -43,7 +43,7 @@ const FilterKebabModal = ({
             onPress={() => setShowFilterModal(false)}>
             <Ionicons name="close" size={25} color="black" />
           </TouchableOpacity>
-          <Text className="text-xl font-bold mb-4 text-center">Filtry</Text>
+          <Text className="text-xl font-bold mb-4 text-center text-custom-green">Filtry</Text>
 
           <ScrollView className="mb-4">
             <Text className="font-semibold">Filtruj według:</Text>
@@ -78,6 +78,28 @@ const FilterKebabModal = ({
                     prev.includes('wieprzowina')
                       ? prev.filter(item => item !== 'wieprzowina')
                       : [...prev, 'wieprzowina'],
+                  )
+                }
+              />
+              <CustomCheckbox
+                label="Turecki"
+                isSelected={filterMeat.includes('turecki')}
+                onToggle={() =>
+                  setFilterMeat(prev =>
+                    prev.includes('turecki')
+                      ? prev.filter(item => item !== 'turecki')
+                      : [...prev, 'turecki'],
+                  )
+                }
+              />
+              <CustomCheckbox
+                label="Jogurtowy"
+                isSelected={filterMeat.includes('jogurtowy')}
+                onToggle={() =>
+                  setFilterMeat(prev =>
+                    prev.includes('jogurtowy')
+                      ? prev.filter(item => item !== 'jogurtowy')
+                      : [...prev, 'jogurtowy'],
                   )
                 }
               />
@@ -196,6 +218,17 @@ const FilterKebabModal = ({
                 }
               />
               <CustomCheckbox
+                label="BBQ"
+                isSelected={filterSauces.includes('bbq')}
+                onToggle={() =>
+                  setFilterSauces(prev =>
+                    prev.includes('bbq')
+                      ? prev.filter(item => item !== 'bbq')
+                      : [...prev, 'bbq'],
+                  )
+                }
+              />
+              <CustomCheckbox
                 label="Arabski"
                 isSelected={filterSauces.includes('arabski')}
                 onToggle={() =>
@@ -240,6 +273,18 @@ const FilterKebabModal = ({
                 }
               />
               <CustomCheckbox
+                label="Koperkowy"
+                isSelected={filterSauces.includes('koperkowy')}
+                onToggle={() =>
+                  setFilterSauces(prev =>
+                    prev.includes('koperkowy')
+                      ? prev.filter(item => item !== 'koperkowy')
+                      : [...prev, 'koperkowy'],
+                  )
+                }
+              />
+
+              <CustomCheckbox
                 label="Miodowo-Musztardowy"
                 isSelected={filterSauces.includes('miodowo-musztardowy')}
                 onToggle={() =>
@@ -247,6 +292,28 @@ const FilterKebabModal = ({
                     prev.includes('miodowo-musztardowy')
                       ? prev.filter(item => item !== 'miodowo-musztardowy')
                       : [...prev, 'miodowo-musztardowy'],
+                  )
+                }
+              />
+              <CustomCheckbox
+                label="Pikantny"
+                isSelected={filterSauces.includes('pikantny')}
+                onToggle={() =>
+                  setFilterSauces(prev =>
+                    prev.includes('pikantny')
+                      ? prev.filter(item => item !== 'pikantny')
+                      : [...prev, 'pikantny'],
+                  )
+                }
+              />
+              <CustomCheckbox
+                label="Ketchup"
+                isSelected={filterSauces.includes('ketchup')}
+                onToggle={() =>
+                  setFilterSauces(prev =>
+                    prev.includes('ketchup')
+                      ? prev.filter(item => item !== 'ketchup')
+                      : [...prev, 'ketchup'],
                   )
                 }
               />

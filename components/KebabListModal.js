@@ -121,18 +121,6 @@ const KebabListModal = ({modalVisible, setModalVisible}) => {
               a.name.localeCompare(b.name),
             );
             break;
-          case 'year_open_asc':
-            return;
-
-          case 'year_open_desc':
-            return;
-
-          case 'rating_asc':
-            return;
-
-          case 'rating_desc':
-            return;
-
           default:
             break;
         }
@@ -210,7 +198,7 @@ const KebabListModal = ({modalVisible, setModalVisible}) => {
 
           {item.pages && item.pages['pyszne.pl'] && (
             <Text
-              className="text-sm text-blue-500 mt-2"
+              className="text-sm text-custom-green mt-2"
               onPress={() => Linking.openURL(item.pages['pyszne.pl'])}>
               Menu na Pyszne.pl
             </Text>
@@ -233,27 +221,20 @@ const KebabListModal = ({modalVisible, setModalVisible}) => {
             onPress={() => setModalVisible(false)}>
             <Ionicons name="close" size={25} color="black" />
           </TouchableOpacity>
-          <Text className="text-xl font-bold mb-4 text-center">
+          <Text className="text-xl font-bold mb-4 text-center text-custom-green">
             Lista Kebabów
           </Text>
           <View className="flex-row justify-between items-center mb-2">
             <TouchableOpacity onPress={() => setShowFilterModal(true)}>
-              <Text className="text-blue-500">Pokaż filtry</Text>
+              <Text className="text-custom-green">Pokaż filtry</Text>
             </TouchableOpacity>
             <Picker
               selectedValue={sortOption || 'name_asc'}
-              style={{height: 40, width: 150, zIndex: 1}}
+              className="h-10 w-36 z-10"
               onValueChange={value => setSortOption(value)}>
               <Picker.Item label="Sortuj" value={null} />
               <Picker.Item label="Nazwa rosnąco" value="name_asc" />
               <Picker.Item label="Nazwa malejąco" value="name_desc" />
-              <Picker.Item label="Rok otwarcia rosnąco" value="year_open_asc" />
-              <Picker.Item
-                label="Rok otwarcia malejąco"
-                value="year_open_desc"
-              />
-              <Picker.Item label="Ocena rosnąco" value="rating_asc" />
-              <Picker.Item label="Ocena malejąco" value="rating_desc" />
             </Picker>
           </View>
           <FlatList
@@ -265,7 +246,7 @@ const KebabListModal = ({modalVisible, setModalVisible}) => {
             <TouchableOpacity
               onPress={() => setPage(page > 1 ? page - 1 : page)}
               disabled={page <= 1}>
-              <Text className="text-blue-500">Poprzednia</Text>
+              <Text className="text-custom-green">Poprzednia</Text>
             </TouchableOpacity>
             <Text>{`Strona ${page}`}</Text>
             <TouchableOpacity
@@ -279,7 +260,7 @@ const KebabListModal = ({modalVisible, setModalVisible}) => {
               disabled={
                 page >= Math.ceil(filteredKebabs.length / itemsPerPage)
               }>
-              <Text className="text-blue-500">Następna</Text>
+              <Text className="text-custom-green">Następna</Text>
             </TouchableOpacity>
           </View>
         </View>
