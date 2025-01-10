@@ -141,6 +141,7 @@ const handleSearch = text => {
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
         kebabs={kebabs}
+        user={user}
       />
 
       <ContactUsModal
