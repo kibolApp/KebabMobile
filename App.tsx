@@ -6,6 +6,7 @@ import WelcomePage from './screens/WelcomePage';
 import SuggestionsManagement from './screens/SuggestionsManagement';
 import AuthPage from './screens/AuthPage';
 import HomePage from './screens/HomePage';
+import KebabPage from './screens/KebabPage';
 
 const Stack = createStackNavigator();
 
@@ -32,6 +33,11 @@ function App(): React.JSX.Element {
           <Stack.Screen
             name="SuggestionsManagement"
             component={SuggestionsManagement}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="KebabPage"
+            component={KebabPage}
             options={{headerShown: false}}
           />
         </Stack.Navigator>
