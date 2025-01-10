@@ -28,6 +28,8 @@ const KebabListModal = ({modalVisible, setModalVisible}) => {
   const [expandedKebab, setExpandedKebab] = useState(null);
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [sortOption, setSortOption] = useState(null);
+  const [meatOptions, setMeatOptions] = useState([]);
+  const [sauceOptions, setSauceOptions] = useState([]);
 
   const daysOfWeekPL = {
     monday: 'Poniedziałek',
@@ -44,6 +46,17 @@ const KebabListModal = ({modalVisible, setModalVisible}) => {
       try {
         const response = await AxiosClient.get('/kebabs');
         setKebabs(response.data || []);
+
+        const uniqueMeats = new Set();
+        const uniqueSauces = new Set();
+
+        response.data.forEach(kebab => {
+          kebab.meats.forEach(meat => uniqueMeats.add(meat));
+          kebab.sauces.forEach(sauce => uniqueSauces.add(sauce));
+        });
+
+        setMeatOptions([...uniqueMeats]);
+        setSauceOptions([...uniqueSauces]);
       } catch (error) {
         Alert.alert('Błąd', 'Nie udało się pobrać listy kebabów.');
       }
@@ -282,6 +295,8 @@ const KebabListModal = ({modalVisible, setModalVisible}) => {
           setFilterPremises={setFilterPremises}
           filterChainstore={filterChainstore}
           setFilterChainstore={setFilterChainstore}
+          meatOptions={meatOptions}
+          sauceOptions={sauceOptions}
         />
       )}
     </Modal>
