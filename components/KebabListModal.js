@@ -31,7 +31,11 @@ const KebabListModal = ({modalVisible, setModalVisible, user}) => {
   const [meatOptions, setMeatOptions] = useState([]);
   const [sauceOptions, setSauceOptions] = useState([]);
   const [favoriteKebabs, setFavoriteKebabs] = useState([]);
-  const [statusCounts, setStatusCounts] = useState({open: 0, closed: 0, planned: 0});
+  const [statusCounts, setStatusCounts] = useState({
+    open: 0,
+    closed: 0,
+    planned: 0,
+  });
   const userId = user?.id;
 
   const handleFavoriteToggle = async kebabId => {
@@ -71,17 +75,17 @@ const KebabListModal = ({modalVisible, setModalVisible, user}) => {
     sunday: 'Niedziela',
   };
 
- const filterByStatus = kebab => {
-      if (kebab.status === 'exists') {
-        return 'open';
-      } else if (kebab.status === 'closed') {
-        return 'closed';
-      } else {
-        return 'planned';
-      }
-    };
+  const filterByStatus = kebab => {
+    if (kebab.status === 'exists') {
+      return 'open';
+    } else if (kebab.status === 'closed') {
+      return 'closed';
+    } else {
+      return 'planned';
+    }
+  };
 
- useEffect(() => {
+  useEffect(() => {
     const fetchKebabs = async () => {
       try {
         const kebabResponse = await AxiosClient.get('/kebabs');
@@ -236,7 +240,7 @@ const KebabListModal = ({modalVisible, setModalVisible, user}) => {
             />
           )}
           <View>
-            <Text className="text-lg font-semibold text-gray-800">
+            <Text className="text-lg font-semibold text-gray-800 max-w-[220px] truncate">
               {item.name}
             </Text>
             <Text className="text-sm text-gray-500">{item.address}</Text>
@@ -310,17 +314,15 @@ const KebabListModal = ({modalVisible, setModalVisible, user}) => {
             Lista Kebabów
           </Text>
 
-                    <View className="flex-row justify-around mb-4">
-                      <Text className="text-gray-800">
-                        Otwarte: {statusCounts.open}
-                      </Text>
-                      <Text className="text-gray-800">
-                        Zamknięte: {statusCounts.closed}
-                      </Text>
-                      <Text className="text-gray-800">
-                        Planowane: {statusCounts.planned}
-                      </Text>
-                    </View>
+          <View className="flex-row justify-around mb-4">
+            <Text className="text-gray-800">Otwarte: {statusCounts.open}</Text>
+            <Text className="text-gray-800">
+              Zamknięte: {statusCounts.closed}
+            </Text>
+            <Text className="text-gray-800">
+              Planowane: {statusCounts.planned}
+            </Text>
+          </View>
 
           <View className="flex-row justify-between items-center mb-2">
             <TouchableOpacity onPress={() => setShowFilterModal(true)}>
