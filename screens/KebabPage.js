@@ -226,16 +226,9 @@ const KebabPage = () => {
 
         <TouchableOpacity
           onPress={() => setModalVisible(true)}
-          className="bg-custom-green p-3 rounded-lg mt-16 mb-4 flex-row items-center justify-center">
-          <Ionicons
-            name="chatbubbles-outline"
-            size={20}
-            color="white"
-            style={{marginRight: 8}}
-          />
-          <Text className="text-white text-center font-bold">
-            Dodaj komentarz
-          </Text>
+          className="bg-custom-green p-3 rounded-lg mt-16 mb-4 flex-row items-center justify-center space-x-2">
+          <Ionicons name="chatbubbles-outline" size={20} color="white" />
+          <Text className="text-white font-bold">Dodaj komentarz</Text>
         </TouchableOpacity>
 
         <View className="p-4">
