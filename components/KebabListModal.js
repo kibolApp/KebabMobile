@@ -31,6 +31,7 @@ const KebabListModal = ({modalVisible, setModalVisible, user}) => {
   const [meatOptions, setMeatOptions] = useState([]);
   const [sauceOptions, setSauceOptions] = useState([]);
   const [favoriteKebabs, setFavoriteKebabs] = useState([]);
+  const [statusCounts, setStatusCounts] = useState({open: 0, closed: 0, planned: 0});
   const userId = user?.id;
 
   const handleFavoriteToggle = async kebabId => {
@@ -70,7 +71,17 @@ const KebabListModal = ({modalVisible, setModalVisible, user}) => {
     sunday: 'Niedziela',
   };
 
-  useEffect(() => {
+ const filterByStatus = kebab => {
+      if (kebab.status === 'exists') {
+        return 'open';
+      } else if (kebab.status === 'closed') {
+        return 'closed';
+      } else {
+        return 'planned';
+      }
+    };
+
+ useEffect(() => {
     const fetchKebabs = async () => {
       try {
         const kebabResponse = await AxiosClient.get('/kebabs');
@@ -89,6 +100,13 @@ const KebabListModal = ({modalVisible, setModalVisible, user}) => {
           isFavorite: userFavorites.includes(kebab.id),
         }));
         setKebabs(updatedKebabs);
+
+        const counts = {open: 0, closed: 0, planned: 0};
+        kebabsData.forEach(kebab => {
+          const status = filterByStatus(kebab);
+          counts[status]++;
+        });
+        setStatusCounts(counts);
 
         const uniqueMeats = new Set();
         const uniqueSauces = new Set();
@@ -110,16 +128,6 @@ const KebabListModal = ({modalVisible, setModalVisible, user}) => {
   }, [modalVisible, userId]);
 
   useEffect(() => {
-    const filterByStatus = kebab => {
-      if (kebab.status === 'exists') {
-        return 'open';
-      } else if (kebab.status === 'closed') {
-        return 'closed';
-      } else {
-        return 'planned';
-      }
-    };
-
     const filterKebabs = () => {
       let filteredList = kebabs;
 
@@ -301,6 +309,19 @@ const KebabListModal = ({modalVisible, setModalVisible, user}) => {
           <Text className="text-xl font-bold mb-4 text-center text-custom-green">
             Lista Kebabów
           </Text>
+
+                    <View className="flex-row justify-around mb-4">
+                      <Text className="text-gray-800">
+                        Otwarte: {statusCounts.open}
+                      </Text>
+                      <Text className="text-gray-800">
+                        Zamknięte: {statusCounts.closed}
+                      </Text>
+                      <Text className="text-gray-800">
+                        Planowane: {statusCounts.planned}
+                      </Text>
+                    </View>
+
           <View className="flex-row justify-between items-center mb-2">
             <TouchableOpacity onPress={() => setShowFilterModal(true)}>
               <Text className="text-custom-green">Pokaż filtry</Text>
