@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -6,10 +6,14 @@ import {
   TouchableOpacity,
   Linking,
   ScrollView,
+  Alert,
 } from 'react-native';
-import {useRoute, navigation} from '@react-navigation/native';
+import {useRoute, useNavigation} from '@react-navigation/native';
 import {Ionicons} from '@expo/vector-icons';
+import AxiosClient from '../AxiosClient';
 import Navbar from '../components/Navbar';
+import {useAuth} from '../contexts/AuthContext';
+import AddCommentModal from '../components/AddCommentModal';
 
 const daysOfWeekPL = {
   monday: 'Poniedziałek',
@@ -23,11 +27,80 @@ const daysOfWeekPL = {
 
 const KebabPage = () => {
   const route = useRoute();
+  const navigation = useNavigation();
   const kebab = route.params.kebab;
 
-  const statusTranslation = kebab.status === 'exists' ? 'Otwarty' : 'Zamknięty';
+  const [comments, setComments] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [newComment, setNewComment] = useState('');
+  const {user} = useAuth();
+  const [page, setPage] = useState(1);
+  const commentsPerPage = 4;
 
+  const statusTranslation = kebab.status === 'exists' ? 'Otwarty' : 'Zamknięty';
   const iconColor = '#2c6e49';
+
+  useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        const response = await AxiosClient.get(`/comments/${kebab.id}`);
+        setComments(response.data || []);
+      } catch (error) {}
+    };
+
+    fetchComments();
+  }, [kebab.id]);
+
+  const handleAddComment = async () => {
+    if (!user || !newComment.trim()) {
+      return;
+    }
+
+    try {
+      const response = await AxiosClient.post(`/kebabs/${kebab.id}/comments`, {
+        id_user: user.id,
+        user_name: user.name,
+        comment: newComment.trim(),
+      });
+
+      setComments(response.data.comments);
+      setNewComment('');
+      setModalVisible(false);
+    } catch (error) {}
+  };
+
+  const handleRemoveComment = async comment => {
+    Alert.alert(
+      'Potwierdzenie usunięcia',
+      'Czy na pewno chcesz usunąć komentarz?',
+      [
+        {
+          text: 'Anuluj',
+          style: 'cancel',
+        },
+        {
+          text: 'Usuń',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              const response = await AxiosClient.delete(
+                `/kebabs/${kebab.id}/comments`,
+                {
+                  data: {id_user: user.id, comment},
+                },
+              );
+              setComments(response.data.comments);
+            } catch (error) {}
+          },
+        },
+      ],
+    );
+  };
+
+  const currentPageComments = comments.slice(
+    (page - 1) * commentsPerPage,
+    page * commentsPerPage,
+  );
 
   return (
     <ScrollView contentContainerStyle={{}} className="bg-white grow">
@@ -150,6 +223,67 @@ const KebabPage = () => {
             </TouchableOpacity>
           )}
         </View>
+        {user && (
+          <TouchableOpacity
+            onPress={() => setModalVisible(true)}
+            className="bg-custom-green p-3 rounded-lg mt-16 mb-4 flex-row items-center justify-center space-x-2">
+            <Ionicons name="chatbubbles-outline" size={20} color="white" />
+            <Text className="text-white font-bold">Dodaj komentarz</Text>
+          </TouchableOpacity>
+        )}
+
+        <View className="p-4">
+          <Text className="text-xl font-bold mb-4">Komentarze:</Text>
+
+          {currentPageComments.length === 0 ? (
+            <Text className="text-gray-600 text-center">
+              Brak komentarzy, dodaj swoją opinię
+            </Text>
+          ) : (
+            currentPageComments.map((comment, index) => (
+              <View key={index} className="bg-gray-100 p-3 rounded-lg mb-2">
+                <Text className="font-bold text-gray-800">
+                  {comment.user_name}
+                </Text>
+                <Text>{comment.comment}</Text>
+                {user.id === comment.id_user && (
+                  <TouchableOpacity
+                    onPress={() => handleRemoveComment(comment.comment)}>
+                    <Text className="text-red-500">Usuń</Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+            ))
+          )}
+
+          <View className="flex-row justify-between mt-4">
+            <TouchableOpacity
+              onPress={() => setPage(page > 1 ? page - 1 : page)}
+              disabled={page <= 1}>
+              <Text className="text-custom-green">Poprzednia</Text>
+            </TouchableOpacity>
+            <Text>{`Strona ${page}`}</Text>
+            <TouchableOpacity
+              onPress={() =>
+                setPage(
+                  page < Math.ceil(comments.length / commentsPerPage)
+                    ? page + 1
+                    : page,
+                )
+              }
+              disabled={page >= Math.ceil(comments.length / commentsPerPage)}>
+              <Text className="text-custom-green">Następna</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <AddCommentModal
+          modalVisible={modalVisible}
+          setModalVisible={setModalVisible}
+          newComment={newComment}
+          setNewComment={setNewComment}
+          handleAddComment={handleAddComment}
+        />
       </View>
     </ScrollView>
   );

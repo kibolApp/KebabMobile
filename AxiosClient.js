@@ -2,7 +2,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AxiosClient = axios.create({
-  baseURL: 'https://sponge-climbing-adder.ngrok-free.app/api',
+  baseURL: 'https://legible-freely-wren.ngrok-free.app/api',
   headers: {
     'Content-Type': 'application/json',
   },
