@@ -13,7 +13,6 @@ import {Ionicons} from '@expo/vector-icons';
 import {Picker} from '@react-native-picker/picker';
 import AxiosClient from '../AxiosClient';
 import FilterKebabModal from './FilterKebabModal';
-import { useAuth } from '../contexts/AuthContext';
 
 const KebabListModal = ({modalVisible, setModalVisible, user}) => {
   const [kebabs, setKebabs] = useState([]);
@@ -34,32 +33,32 @@ const KebabListModal = ({modalVisible, setModalVisible, user}) => {
   const [favoriteKebabs, setFavoriteKebabs] = useState([]);
   const userId = user?.id;
 
- const handleFavoriteToggle = async (kebabId) => {
-   if (!userId) {
-     Alert.alert('Błąd', 'Nie jesteś zalogowany.');
-     return;
-   }
+  const handleFavoriteToggle = async kebabId => {
+    if (!userId) {
+      Alert.alert('Błąd', 'Nie jesteś zalogowany.');
+      return;
+    }
 
-   try {
-     const isFavorite = favoriteKebabs.includes(kebabId);
+    try {
+      const isFavorite = favoriteKebabs.includes(kebabId);
 
-     if (isFavorite) {
-       const response = await AxiosClient.post('/remfav', {
-         user_id: userId,
-         kebab_id: kebabId,
-       });
-       setFavoriteKebabs((prev) => prev.filter((id) => id !== kebabId));
-     } else {
-       const response = await AxiosClient.post('/addfav', {
-         user_id: userId,
-         kebab_id: kebabId,
-       });
-       setFavoriteKebabs((prev) => [...prev, kebabId]);
-     }
-   } catch (error) {
-     Alert.alert('Błąd', 'Nie udało się zmienić ulubionych.');
-   }
- };
+      if (isFavorite) {
+        await AxiosClient.post('/remfav', {user_id: userId, kebab_id: kebabId});
+        setFavoriteKebabs(prev => prev.filter(id => id !== kebabId));
+      } else {
+        await AxiosClient.post('/addfav', {user_id: userId, kebab_id: kebabId});
+        setFavoriteKebabs(prev => [...prev, kebabId]);
+      }
+
+      setKebabs(prev =>
+        prev.map(kebab =>
+          kebab.id === kebabId ? {...kebab, isFavorite: !isFavorite} : kebab,
+        ),
+      );
+    } catch (error) {
+      Alert.alert('Błąd', 'Nie udało się zmienić ulubionych.');
+    }
+  };
 
   const daysOfWeekPL = {
     monday: 'Poniedziałek',
@@ -71,36 +70,44 @@ const KebabListModal = ({modalVisible, setModalVisible, user}) => {
     sunday: 'Niedziela',
   };
 
- useEffect(() => {
-   const fetchKebabs = async () => {
-     try {
-       const response = await AxiosClient.get('/kebabs');
-       setKebabs(response.data || []);
+  useEffect(() => {
+    const fetchKebabs = async () => {
+      try {
+        const kebabResponse = await AxiosClient.get('/kebabs');
+        const kebabsData = kebabResponse.data || [];
+        setKebabs(kebabsData);
 
-       if (userId) {
-         const favoriteResponse = await AxiosClient.get(`/fav/${userId}`);
-         setFavoriteKebabs(favoriteResponse.data.map(fav => fav.kebab_id));
-       }
+        let userFavorites = [];
+        if (userId) {
+          const favoriteResponse = await AxiosClient.get(`/fav/${userId}`);
+          userFavorites = favoriteResponse.data.favorites || [];
+          setFavoriteKebabs(userFavorites);
+        }
 
-       const uniqueMeats = new Set();
-       const uniqueSauces = new Set();
+        const updatedKebabs = kebabsData.map(kebab => ({
+          ...kebab,
+          isFavorite: userFavorites.includes(kebab.id),
+        }));
+        setKebabs(updatedKebabs);
 
-       response.data.forEach(kebab => {
-         kebab.meats.forEach(meat => uniqueMeats.add(meat));
-         kebab.sauces.forEach(sauce => uniqueSauces.add(sauce));
-       });
+        const uniqueMeats = new Set();
+        const uniqueSauces = new Set();
+        kebabsData.forEach(kebab => {
+          kebab.meats.forEach(meat => uniqueMeats.add(meat));
+          kebab.sauces.forEach(sauce => uniqueSauces.add(sauce));
+        });
 
-       setMeatOptions([...uniqueMeats]);
-       setSauceOptions([...uniqueSauces]);
-     } catch (error) {
-       Alert.alert('Błąd', 'Nie udało się pobrać listy kebabów.');
-     }
-   };
+        setMeatOptions([...uniqueMeats]);
+        setSauceOptions([...uniqueSauces]);
+      } catch (error) {
+        Alert.alert('Błąd', 'Nie udało się pobrać listy kebabów.');
+      }
+    };
 
-   if (modalVisible) {
-     fetchKebabs();
-   }
- }, [modalVisible, userId]);
+    if (modalVisible) {
+      fetchKebabs();
+    }
+  }, [modalVisible, userId]);
 
   useEffect(() => {
     const filterByStatus = kebab => {
@@ -174,16 +181,16 @@ const KebabListModal = ({modalVisible, setModalVisible, user}) => {
         }
       }
 
-        if (!sortOption) {
-            const favoriteKebabsList = filteredList.filter(kebab =>
-              favoriteKebabs.includes(kebab.id),
-            );
-            const nonFavoriteKebabsList = filteredList.filter(
-              kebab => !favoriteKebabs.includes(kebab.id),
-            );
+      if (!sortOption) {
+        const favoriteKebabsList = filteredList.filter(kebab =>
+          favoriteKebabs.includes(kebab.id),
+        );
+        const nonFavoriteKebabsList = filteredList.filter(
+          kebab => !favoriteKebabs.includes(kebab.id),
+        );
 
-            filteredList = [...favoriteKebabsList, ...nonFavoriteKebabsList];
-          }
+        filteredList = [...favoriteKebabsList, ...nonFavoriteKebabsList];
+      }
 
       setFilteredKebabs(filteredList);
     };
@@ -198,7 +205,7 @@ const KebabListModal = ({modalVisible, setModalVisible, user}) => {
     filterPremises,
     filterChainstore,
     sortOption,
-      favoriteKebabs,
+    favoriteKebabs,
   ]);
 
   const currentPageData = filteredKebabs.slice(
@@ -206,81 +213,77 @@ const KebabListModal = ({modalVisible, setModalVisible, user}) => {
     page * itemsPerPage,
   );
 
- const renderItem = ({ item }) => (
-   <View className="border-b border-gray-300">
-     <TouchableOpacity
-       className="flex-row justify-between items-center p-4"
-       onPress={() =>
-         setExpandedKebab(expandedKebab === item.id ? null : item.id)
-       }
-     >
-       <View className="flex-row items-center">
-         {item.logo && (
-           <Image
-             source={{ uri: item.logo }}
-             className="w-12 h-12 rounded-lg mr-2"
-           />
-         )}
-         <View>
-           <Text className="text-lg font-semibold text-gray-800">
-             {item.name}
-           </Text>
-           <Text className="text-sm text-gray-500">{item.address}</Text>
-         </View>
-       </View>
-       <View className="flex-row items-center">
-         <TouchableOpacity
-           onPress={() => handleFavoriteToggle(item.id)}
-           className="mr-2"
-         >
-           <Ionicons
-             name={
-               favoriteKebabs.includes(item.id) ? 'heart' : 'heart-outline'
-             }
-             size={24}
-             color={favoriteKebabs.includes(item.id) ? 'red' : 'black'}
-           />
-         </TouchableOpacity>
-         <Ionicons
-           name={expandedKebab === item.id ? 'chevron-up' : 'chevron-down'}
-           size={24}
-           color="black"
-         />
-       </View>
-     </TouchableOpacity>
-     {expandedKebab === item.id && (
-            <View className="p-4 bg-gray-100">
-              <Text className="text-sm text-gray-600">Godziny otwarcia:</Text>
-              {Object.entries(item.opening_hours).map(([day, hours]) => (
-                <Text key={day} className="text-sm text-gray-500">
-                  {daysOfWeekPL[day]}: {hours}
-                </Text>
-              ))}
+  const renderItem = ({item}) => (
+    <View className="border-b border-gray-300">
+      <TouchableOpacity
+        className="flex-row justify-between items-center p-4"
+        onPress={() =>
+          setExpandedKebab(expandedKebab === item.id ? null : item.id)
+        }>
+        <View className="flex-row items-center">
+          {item.logo && (
+            <Image
+              source={{uri: item.logo}}
+              className="w-12 h-12 rounded-lg mr-2"
+            />
+          )}
+          <View>
+            <Text className="text-lg font-semibold text-gray-800">
+              {item.name}
+            </Text>
+            <Text className="text-sm text-gray-500">{item.address}</Text>
+          </View>
+        </View>
+        <View className="flex-row items-center">
+          <TouchableOpacity
+            onPress={() => handleFavoriteToggle(item.id)}
+            className="mr-2">
+            <Ionicons
+              name={item.isFavorite ? 'heart' : 'heart-outline'}
+              size={24}
+              color={item.isFavorite ? 'red' : 'black'}
+            />
+          </TouchableOpacity>
+          <Ionicons
+            name={expandedKebab === item.id ? 'chevron-up' : 'chevron-down'}
+            size={24}
+            color="black"
+          />
+        </View>
+      </TouchableOpacity>
+      {expandedKebab === item.id && (
+        <View className="p-4 bg-gray-100">
+          <Text className="text-sm text-gray-600">Godziny otwarcia:</Text>
+          {Object.entries(item.opening_hours).map(([day, hours]) => (
+            <Text key={day} className="text-sm text-gray-500">
+              {daysOfWeekPL[day]}: {hours}
+            </Text>
+          ))}
 
-              <Text className="text-sm text-gray-600 mt-2">Dostępne sosy:</Text>
-              <Text className="text-sm text-gray-500">
-                {item.sauces.join(', ')}
-              </Text>
+          <Text className="text-sm text-gray-600 mt-2">Dostępne sosy:</Text>
+          <Text className="text-sm text-gray-500">
+            {item.sauces.join(', ')}
+          </Text>
 
-              <Text className="text-sm text-gray-600 mt-2">Rodzaje mięs:</Text>
-              <Text className="text-sm text-gray-500">{item.meats.join(', ')}</Text>
+          <Text className="text-sm text-gray-600 mt-2">Rodzaje mięs:</Text>
+          <Text className="text-sm text-gray-500">{item.meats.join(', ')}</Text>
 
-              <Text className="text-sm text-gray-600 mt-2">Opcje zamówienia:</Text>
-              <Text className="text-sm text-gray-500">
-                {item.ordering_options.join(', ')}
-              </Text>
+          <Text className="text-sm text-gray-600 mt-2">Opcje zamówienia:</Text>
+          <Text className="text-sm text-gray-500">
+            {item.ordering_options.join(', ')}
+          </Text>
 
-              {item.pages && item.pages['pyszne.pl'] && (
-                <Text
-                  className="text-sm text-custom-green mt-2"
-                  onPress={() => Linking.openURL(item.pages['pyszne.pl'])}>
-                  Menu na Pyszne.pl
-                </Text>
-              )}
-            </View>
+          {item.pages && item.pages['pyszne.pl'] && (
+            <Text
+              className="text-sm text-custom-green mt-2"
+              onPress={() => Linking.openURL(item.pages['pyszne.pl'])}>
+              Menu na Pyszne.pl
+            </Text>
           )}
         </View>
-      );
+      )}
+    </View>
+  );
 
   return (
     <Modal
