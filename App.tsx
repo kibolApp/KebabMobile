@@ -40,11 +40,6 @@ function App(): React.JSX.Element {
             component={KebabPage}
             options={{ headerShown: false }}
           />
-          <Stack.Screen
-            name="KebabPage"
-            component={KebabPage}
-            options={{headerShown: false}}
-          />
         </Stack.Navigator>
       </NavigationContainer>
     </AuthProvider>
