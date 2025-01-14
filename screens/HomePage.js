@@ -141,6 +141,7 @@ function HomePage() {
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
         kebabs={kebabs}
+        user={user}
       />
 
       <ContactUsModal
