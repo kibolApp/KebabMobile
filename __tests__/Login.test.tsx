@@ -84,7 +84,7 @@ describe('Login Component', () => {
     await waitFor(() => {
       expect(Alert.alert).toHaveBeenCalledWith(
         'Błąd',
-        'Podano błędny adres mailowy lub hasło'
+        'Podano błędny adres mailowy lub hasło',
       );
     });
   });

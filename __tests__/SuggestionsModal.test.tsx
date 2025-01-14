@@ -10,7 +10,11 @@ describe('SuggestionsModal', () => {
     };
 
     const {getByText} = render(
-      <SuggestionsModal visible={true} suggestion={suggestion} onClose={() => {}} />
+      <SuggestionsModal
+        visible={true}
+        suggestion={suggestion}
+        onClose={() => {}}
+      />,
     );
 
     expect(getByText('Szczegóły Sugestii')).toBeTruthy();
@@ -21,7 +25,7 @@ describe('SuggestionsModal', () => {
 
   it('should not be visible when visible is false', () => {
     const {queryByText} = render(
-      <SuggestionsModal visible={false} suggestion={{}} onClose={() => {}} />
+      <SuggestionsModal visible={false} suggestion={{}} onClose={() => {}} />,
     );
 
     expect(queryByText('Szczegóły Sugestii')).toBeNull();
@@ -35,7 +39,11 @@ describe('SuggestionsModal', () => {
     };
 
     const {getByText} = render(
-      <SuggestionsModal visible={true} suggestion={suggestion} onClose={onCloseMock} />
+      <SuggestionsModal
+        visible={true}
+        suggestion={suggestion}
+        onClose={onCloseMock}
+      />,
     );
 
     fireEvent.press(getByText('Zamknij'));

@@ -1,8 +1,8 @@
 import React from 'react';
-import { render, fireEvent, waitFor } from '@testing-library/react-native';
+import {render, fireEvent, waitFor} from '@testing-library/react-native';
 import ContactUsModal from '../components/ContactUsModal';
 import AxiosClient from '../AxiosClient';
-import { Alert } from 'react-native';
+import {Alert} from 'react-native';
 
 jest.mock('../AxiosClient', () => ({
   get: jest.fn(),
@@ -15,18 +15,18 @@ global.alert = jest.fn();
 
 describe('ContactUsModal Component', () => {
   beforeEach(() => {
-    AxiosClient.get.mockResolvedValue({ data: { user: { name: 'Test User' } } });
+    AxiosClient.get.mockResolvedValue({data: {user: {name: 'Test User'}}});
   });
 
   it('renders the contact form correctly', () => {
-    const { getByPlaceholderText, getByText } = render(<ContactUsModal />);
+    const {getByPlaceholderText, getByText} = render(<ContactUsModal />);
 
     expect(getByPlaceholderText('Opisz swoje sugestie...')).toBeTruthy();
     expect(getByText('Wyślij')).toBeTruthy();
   });
 
   it('handles input changes', () => {
-    const { getByPlaceholderText } = render(<ContactUsModal />);
+    const {getByPlaceholderText} = render(<ContactUsModal />);
     const messageInput = getByPlaceholderText('Opisz swoje sugestie...');
 
     fireEvent.changeText(messageInput, 'To jest testowa wiadomość.');
@@ -37,7 +37,7 @@ describe('ContactUsModal Component', () => {
   it('handles successful message submission', async () => {
     AxiosClient.post.mockResolvedValueOnce({});
 
-    const { getByPlaceholderText, getByText } = render(<ContactUsModal />);
+    const {getByPlaceholderText, getByText} = render(<ContactUsModal />);
     const messageInput = getByPlaceholderText('Opisz swoje sugestie...');
     const sendButton = getByText('Wyślij');
 
@@ -56,7 +56,7 @@ describe('ContactUsModal Component', () => {
   it('handles message submission failure', async () => {
     AxiosClient.post.mockRejectedValueOnce(new Error('Error'));
 
-    const { getByPlaceholderText, getByText } = render(<ContactUsModal />);
+    const {getByPlaceholderText, getByText} = render(<ContactUsModal />);
     const messageInput = getByPlaceholderText('Opisz swoje sugestie...');
     const sendButton = getByText('Wyślij');
 
@@ -64,7 +64,9 @@ describe('ContactUsModal Component', () => {
     fireEvent.press(sendButton);
 
     await waitFor(() => {
-      expect(global.alert).toHaveBeenCalledWith('Nie udało się wysłać sugestii. Spróbuj ponownie później.');
+      expect(global.alert).toHaveBeenCalledWith(
+        'Nie udało się wysłać sugestii. Spróbuj ponownie później.',
+      );
     });
   });
 });

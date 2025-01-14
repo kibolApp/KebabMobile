@@ -43,7 +43,9 @@ describe('Register Component', () => {
     const mockToggleForm = jest.fn();
     AxiosClient.post.mockResolvedValueOnce({});
 
-    const {getByPlaceholderText, getByText} = render(<Register toggleForm={mockToggleForm} />);
+    const {getByPlaceholderText, getByText} = render(
+      <Register toggleForm={mockToggleForm} />,
+    );
     const nameInput = getByPlaceholderText('Nazwa użytkownika');
     const emailInput = getByPlaceholderText('Adres E-mail');
     const passwordInput = getByPlaceholderText('Hasło');
@@ -63,7 +65,10 @@ describe('Register Component', () => {
         password: 'password123',
         password_confirmation: 'password123',
       });
-      expect(Alert.alert).toHaveBeenCalledWith('Sukces', 'Rejestracja zakończona pomyślnie');
+      expect(Alert.alert).toHaveBeenCalledWith(
+        'Sukces',
+        'Rejestracja zakończona pomyślnie',
+      );
       expect(mockToggleForm).toHaveBeenCalled();
     });
   });
@@ -85,7 +90,10 @@ describe('Register Component', () => {
     fireEvent.press(registerButton);
 
     await waitFor(() => {
-      expect(Alert.alert).toHaveBeenCalledWith('Błąd', 'Wystąpił problem z rejestracją');
+      expect(Alert.alert).toHaveBeenCalledWith(
+        'Błąd',
+        'Wystąpił problem z rejestracją',
+      );
     });
   });
 });
