@@ -1,15 +1,15 @@
 import React from 'react';
-import { TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { Ionicons } from '@expo/vector-icons';
+import {TouchableOpacity} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import {Ionicons} from '@expo/vector-icons';
 
-export default function BackButton({ onPress, color = '#000000' }) {
- const navigation = useNavigation();
+export default function BackButton({onPress, color = '#000000'}) {
+  const navigation = useNavigation();
   return (
-     <TouchableOpacity
-               onPress={() => navigation.goBack()}
-             >
-               <Ionicons name="arrow-back" size={30} color={color} />
-             </TouchableOpacity>
-         );
+    <TouchableOpacity
+      onPress={() => navigation.goBack()}
+      accessibilityRole="button">
+      <Ionicons name="arrow-back" size={30} color={color} />
+    </TouchableOpacity>
+  );
 }

@@ -45,6 +45,7 @@ export default function SuggestionsScreen({navigation}) {
       <Text className="text-sm text-gray-500 flex-1 mx-4">{item.contents}</Text>
       <View className="flex-row items-center">
         <TouchableOpacity
+          testID={`eye-button-${item.id}`}
           className="mr-3"
           onPress={() => {
             setSelectedSuggestion(item);
@@ -52,7 +53,9 @@ export default function SuggestionsScreen({navigation}) {
           }}>
           <Ionicons name="eye" size={24} color="#4CAF50" />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => deleteSuggestion(item.id)}>
+        <TouchableOpacity
+          testID={`delete-button-${item.id}`}
+          onPress={() => deleteSuggestion(item.id)}>
           <Ionicons name="trash" size={24} color="#F44336" />
         </TouchableOpacity>
       </View>
