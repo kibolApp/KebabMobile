@@ -86,7 +86,7 @@ const KebabPage = () => {
               const response = await AxiosClient.delete(
                 `/kebabs/${kebab.id}/comments`,
                 {
-                  data: {id_user: user.id, comment},
+                  data: {id_user: user.id, user_name: user.name, comment},
                 },
               );
               setComments(response.data.comments);
